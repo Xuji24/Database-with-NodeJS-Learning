@@ -57,18 +57,37 @@ const insertUserAccount = async (sqlCon, email, hashedPassword, isVerified, firs
 const findOrCreateUser = async (profile) => {
     const email = profile.emails[0].value;
     const fullName = profile.displayName;
-
     return await databaseTransaction(async (sqlCon) => {
-        const [users] = await sqlCon.query('SELECT * FROM customer_account WHERE email = ?', [email]);
-        if (users.length > 0) return users[0];
-
-        const [result] = await sqlCon.query(
-            'INSERT INTO customer_account (email, first_name, is_verified) VALUES (?, ?, ?)',
-            [email, fullName, true]
+        const [users] = await sqlCon.query(
+           `SELECT ca.*, c.full_name
+            FROM customer_account ca
+            JOIN customer c ON ca.accountID = c.accountID
+            WHERE ca.email = ?`,
+        [email]
         );
+        if (users.length > 0) return users[0];
+        
+        // insert customer account
+        const [customerAccount] = await sqlCon.query(
+        "INSERT INTO customer_account (email, is_verified) VALUES (?, ?)",
+        [email, true]
+        );
+        const accountID = customerAccount.insertId;
 
-        return { accountID: result.insertId, email, first_name: fullName };
-    });
+        // insert customer details
+        const [customerInfo] = await sqlCon.query(
+        "INSERT INTO customer (accountID, full_name, email) VALUES (?, ?, ?)",
+        [accountID, fullName, email]
+        );
+        const customerId = customerInfo.insertId;
+        
+        return { 
+            accountID: customerAccount.insertId,
+            customerId,
+            email,
+            full_name
+        };
+  });
 };
 
 // ============================ User Verification Email ============================================== //

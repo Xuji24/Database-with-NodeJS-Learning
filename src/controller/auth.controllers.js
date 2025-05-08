@@ -108,6 +108,13 @@ const loginUser = async (req, res) => {
      }, res);
 }
 
+const loginSuccess = (req, res) => {
+    const name = req.user.full_name|| "Guest";
+    res.status(200).json({
+    message: `Welcome ${name}`,
+    user: req.user
+  });
+};
 //New Progress
 const logoutUser = async (req, res) => {
     try {
@@ -222,6 +229,7 @@ module.exports = {
     registerUser,
     verifyEmail,
     loginUser,
+    loginSuccess,
     logoutUser,
     forgotPassword,
     resetPassword

@@ -1,51 +1,50 @@
-const express = require('express');
+const express = require("express");
 //new progress
-const session = require('express-session');
-const passport = require('passport');
-const dotenv = require('dotenv');
+const session = require("express-session");
+const passport = require("passport");
+const dotenv = require("dotenv");
 
 dotenv.config();
 
+const auth = require("./routes/auth.routes");
+require("./utils/passport.setup");
 
-const auth = require('./routes/auth.routes');
-require('./utils/passport.setup');
-const inquiry = require('./routes/inquiry.routes');
+const inquiry = require("./routes/inquiry.routes");
 //new progress
-const feedback = require('./routes/feedback.routes');
-const booking = require('./routes/booking.routes');
+const feedback = require("./routes/feedback.routes");
+const booking = require("./routes/booking.routes");
 
 const app = express();
 const port = 3000;
 
-// new progress
-app.use(session({
-    secret: 'secret',
+
+
+// middleware
+app.use(express.static("public")); // for serving static files
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // for x-www-form-urlencoded
+app.use(
+  session({
+    secret: "secret",
     resave: false,
     saveUninitialized: true,
-}));
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
-
-// middleware
-app.use(express.static('public')); // for serving static files
-app.use(express.json());
-app.use(express.urlencoded({ extended: true })); // for x-www-form-urlencoded
-
 //middleware routes
-app.use('/api/auth', auth);
-app.use('/api/inquiry', inquiry);
+app.use("/api/auth", auth);
+app.use("/api/inquiry", inquiry);
 //new progress
-app.use('/api', feedback);
-app.use('/api/booking', booking);
+app.use("/api", feedback);
+app.use("/api/booking", booking);
 
 
-
-app.get('/', (req, res) =>{
-    res.render('index.html');
+app.get("/", (req, res) => {
+  res.render("index.html");
 });
 
-
 app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on http://localhost:${port}`);
 });
