@@ -33,24 +33,27 @@ const updateUserAccount = async (email, newPassword) => {
 // insert user account information
 const insertUserAccount = async (sqlCon, email, hashedPassword, isVerified, firstName, lastName) => {
     let isCreated = false;
-    // Store the user in the database
-    const [newCustomerAccount] = await sqlCon.query('INSERT INTO customer_account (email, password, is_verified) VALUES (?, ?, ?)', [email, hashedPassword, isVerified]);
-    const userId = newCustomerAccount.insertId; // Get the ID of the newly created user
-    // Check if the user was created successfully
-    if (newCustomerAccount.affectedRows === 0) {
-        throw new Error('Failed to create user');
-    }
-    
-    const [newCustomerDetails] = await sqlCon.query('INSERT INTO customers (accountID, name, email) VALUES (?, ?, ?)', [userId, firstName + ' ' + lastName, email]);
-    
-    // Check if the user was created successfully
-    if (newCustomerDetails.affectedRows === 0) {
-        throw new Error('Failed to create user' );
-    }else{
-        isCreated = true;
-    }
 
-    return isCreated;
+    return await databaseTransaction(async (sqlCon) => {
+        // Store the user in the database
+        const [newCustomerAccount] = await sqlCon.query('INSERT INTO customer_account (email, password, is_verified) VALUES (?, ?, ?)', [email, hashedPassword, isVerified]);
+        const userId = newCustomerAccount.insertId; // Get the ID of the newly created user
+        // Check if the user was created successfully
+        if (newCustomerAccount.affectedRows === 0) {
+            throw new Error('Failed to create user');
+        }
+        
+        const [newCustomerDetails] = await sqlCon.query('INSERT INTO customers (accountID, full_name, email) VALUES (?, ?, ?)', [userId, firstName + ' ' + lastName, email]);
+        
+        // Check if the user was created successfully
+        if (newCustomerDetails.affectedRows === 0) {
+            throw new Error('Failed to create user' );
+        }else{
+            isCreated = true;
+        }
+
+        return isCreated;
+    });
 }
 
 // insert or find user by google-oauth
@@ -85,7 +88,7 @@ const findOrCreateUser = async (profile) => {
             accountID: customerAccount.insertId,
             customerId,
             email,
-            full_name
+            full_name: fullName
         };
   });
 };

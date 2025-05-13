@@ -1,9 +1,8 @@
 const express = require("express");
-//new progress
 const session = require("express-session");
 const passport = require("passport");
 const dotenv = require("dotenv");
-
+const cors = require("cors");
 dotenv.config();
 
 const auth = require("./routes/auth.routes");
@@ -23,6 +22,7 @@ const port = 3000;
 app.use(express.static("public")); // for serving static files
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // for x-www-form-urlencoded
+app.use(cors());
 app.use(
   session({
     secret: "secret",
