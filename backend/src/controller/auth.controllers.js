@@ -6,10 +6,10 @@ const {
     insertUserAccount, 
     sendVerificationEmail, 
     updateVerificationStatus,
-    getUserByEmail, 
+    getUserByEmail,
+    getUserInfoByEmail,
     updateUserAccount
 } = require('../model/user.models');
-const databaseTransaction = require('../utils/db.transaction');
 const sendEmail = require('../utils/email.sender');
 const checkFields = require('../utils/validation.utils');
 // =========================== User Validation ============================================== //
@@ -27,24 +27,22 @@ const registerUser = async (req, res) =>{
     }
    // Check if the email is in a valid format
    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-   if (!emailRegex.test(email) || !email.includes('@gmail') || !email.includes('.com')) {
+    if (!emailRegex.test(email) || !email.includes('@gmail') || !email.includes('.com')) {
        return res.status(400).json({ message: 'Invalid email format' });
-   }
+    }
 
-   await databaseTransaction(async (sqlCon) =>{
-        const userExist = await getUserByEmail(sqlCon, email);
-        if (userExist) {
-            return res.status(400).json({ message: 'Email already exists' });
-        }
+    const userExist = await getUserByEmail(email);
+    if (userExist){
+       return res.status(400).json({ message: 'Email already exists' });
+    }
 
-        passwordStrength(password, res);
-        const hashedPassword = await bcrypt.hash(password, 10);
+    passwordStrength(password, res);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-        isCreated = await insertUserAccount(sqlCon, email, hashedPassword, isVerified, firstName, lastName);
+    isCreated = await insertUserAccount(email, hashedPassword, isVerified, firstName, lastName);
 
-        // Use the SAME sqlCon here
-        await sendVerificationEmail(sqlCon, email);
-    }, res);
+    // Use the SAME sqlCon here
+    await sendVerificationEmail(email);               
    
    if(isCreated){
         return res.status(200).json({ message: 'Registered successfully. Check your email to verify your account.' });
@@ -71,41 +69,44 @@ const verifyEmail = async (req, res) => {
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
      // Check for empty fields
-     checkFields(email, password, null, res);
+    checkFields(email, password, null, res);
 
-     await databaseTransaction(async (sqlCon) =>{
-        // Check if the email exist
-        const userExist = await getUserByEmail(sqlCon, email);
-        if(!userExist){
-            return res.status(400).json({message: 'Email does not exist'});
-        }
-        // Check if the password is correct
-        const passwordMatch = await bcrypt.compare(password, userExist.password);
-        if(!passwordMatch){
-            return res.status(400).json({ message: 'Incorrect email or password'});
-        }
-        console.log('Logging in user: ', userExist);
-        const user = userExist;
-        // Generate a JWT token
-        const token = jwt.sign(
-            { 
-                // Get id and email of the current user
-                id: user.accountID,
-                email: user.email
+    // Check if the email exist
+    const userExist = await getUserByEmail(email);
+    if(!userExist){
+        return res.status(400).json({message: 'Email does not exist'});
+    }
+    if(!userExist.password === "" || userExist.password === null){
+        return res.status(400).json({message: 'User does not exist'});
+    }
+    
+    const passwordMatch = await bcrypt.compare(password, userExist.password);
+    if(!passwordMatch){
+        return res.status(400).json({ message: 'Incorrect email or password'});
+    }
+    console.log('Logging in user: ', userExist);
 
-            }, 
-            jwtSecretKey, 
-            { expiresIn: '1h' }
-        );
+    const user = await getUserInfoByEmail(email);
+    console.log(user.full_name)
+    // Generate a JWT token
+    const token = jwt.sign(
+        { 
+            // Get id and email of the current user
+            id: user.accountID,
+            email: user.email
+
+        }, 
+        jwtSecretKey, 
+        { expiresIn: '1h' }
+    );
         
-        // or redirect to another page and use the token
-        //New Progress
-        return res.status(200).json({ 
-            message: `Login successful, welcome ${req.user.name}`,
-            user: req.user, 
-            token: token 
-        }); // Send a JSON response with the token
-     }, res);
+    // or redirect to another page and use the token
+    //New Progress
+    return res.status(200).json({ 
+        message: `Login successful, welcome ${user.full_name}`,
+        user: user, 
+        token: token 
+    }); // Send a JSON response with the token   
 }
 
 const loginSuccess = (req, res) => {

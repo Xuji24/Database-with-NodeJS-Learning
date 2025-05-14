@@ -6,10 +6,20 @@ const bcrypt = require('bcryptjs');
 
 // =========================== User Account ============================================== //
 // get user email
-const getUserByEmail = async (sqlCon, email) => {
-    const [rows] = await sqlCon.query('SELECT * FROM customer_account WHERE email = ?', [email]);
-    return rows.length > 0 ? rows[0] : null;
+const getUserByEmail = async (email) => {
+    return await databaseTransaction(async (sqlCon) => {
+        const [userAccount] = await sqlCon.query('SELECT * FROM customer_account WHERE email = ?', [email]);
+        return userAccount.length > 0 ? userAccount[0] : null;
+    });
+    
 };
+
+const getUserInfoByEmail = async (email) => {
+    return await databaseTransaction(async (sqlCon) => {
+        const [userInfo] = await sqlCon.query('SELECT * FROM customer WHERE email = ?', [email]);
+        return userInfo.length > 0 ? userInfo[0] : null;
+    });
+}
 // update user account information
 const updateUserAccount = async (email, newPassword) => {
     return await databaseTransaction(async (sqlCon) =>{
@@ -31,7 +41,7 @@ const updateUserAccount = async (email, newPassword) => {
 }
 
 // insert user account information
-const insertUserAccount = async (sqlCon, email, hashedPassword, isVerified, firstName, lastName) => {
+const insertUserAccount = async (email, hashedPassword, isVerified, firstName, lastName) => {
     let isCreated = false;
 
     return await databaseTransaction(async (sqlCon) => {
@@ -43,7 +53,7 @@ const insertUserAccount = async (sqlCon, email, hashedPassword, isVerified, firs
             throw new Error('Failed to create user');
         }
         
-        const [newCustomerDetails] = await sqlCon.query('INSERT INTO customers (accountID, full_name, email) VALUES (?, ?, ?)', [userId, firstName + ' ' + lastName, email]);
+        const [newCustomerDetails] = await sqlCon.query('INSERT INTO customer (accountID, full_name, email) VALUES (?, ?, ?)', [userId, firstName + ' ' + lastName, email]);
         
         // Check if the user was created successfully
         if (newCustomerDetails.affectedRows === 0) {
@@ -95,29 +105,32 @@ const findOrCreateUser = async (profile) => {
 
 // ============================ User Verification Email ============================================== //
 // Verify the account through the email
-const sendVerificationEmail = async (sqlCon, email) => {
-    try {
-        const [userInfo] = await sqlCon.query('SELECT * FROM customer_account WHERE email = ?', [email]);
-        if (userInfo.length === 0) {
-            throw new Error('User not found');
+const sendVerificationEmail = async (email) => {
+    return await databaseTransaction(async (sqlCon) => {
+        try {
+            const [userInfo] = await sqlCon.query('SELECT * FROM customer_account WHERE email = ?', [email]);
+            if (userInfo.length === 0) {
+                throw new Error('User not found');
+            }
+
+            const token = jwt.sign({ email }, jwtSecretKey, { expiresIn: '1h' });
+
+            const verificationLink = `${process.env.CLIENT_URL}/verify-email/${token}`;
+            const receiver = {
+                to: email,
+                subject: 'Email Verification',
+                html: `<p>Click the link below to verify your email:</p><a href="${verificationLink}">${verificationLink}</a>`,
+                from: process.env.EMAIL_USER,
+            };
+
+            await sendEmail(receiver);
+            return true;    
+        } catch (err) {
+            console.error(err);
+            throw new Error('Failed to send verification email');
         }
-
-        const token = jwt.sign({ email }, jwtSecretKey, { expiresIn: '1h' });
-
-        const verificationLink = `${process.env.CLIENT_URL}/verify-email/${token}`;
-        const receiver = {
-            to: email,
-            subject: 'Email Verification',
-            html: `<p>Click the link below to verify your email:</p><a href="${verificationLink}">${verificationLink}</a>`,
-            from: process.env.EMAIL_USER,
-        };
-
-        await sendEmail(receiver);
-        return true;
-    } catch (err) {
-        console.error(err);
-        throw new Error('Failed to send verification email');
-    }
+    });
+    
 };
 
 const updateVerificationStatus = async (email) => {
@@ -136,7 +149,7 @@ const updateVerificationStatus = async (email) => {
 
 const getUserBasicInfo = async (email) => {
     return await databaseTransaction(async (sqlCon) =>{
-        const [userInfo] = await sqlCon.query('SELECT * FROM customers WHERE email = ?', [email]);
+        const [userInfo] = await sqlCon.query('SELECT * FROM customer WHERE email = ?', [email]);
 
         if(userInfo.length === 0) {
             throw new Error('User not found');
@@ -149,6 +162,7 @@ const getUserBasicInfo = async (email) => {
 // User Account Information
 module.exports = {
     getUserByEmail,
+    getUserInfoByEmail,
     updateUserAccount,
     insertUserAccount,
     findOrCreateUser,
