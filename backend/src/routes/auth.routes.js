@@ -13,7 +13,7 @@ const {
   logoutUser,
   forgotPassword,
   resetPassword,
-} = require("../controller/auth.controllers");
+} = require("../controllers/auth.controllers");
 
 // middlewares
 const checkCaptcha = require("../middlewares/captcha.middleware");

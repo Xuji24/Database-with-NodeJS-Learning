@@ -5,7 +5,7 @@ const {jwtSecretKey} = require('../config/env');
 const bcrypt = require('bcryptjs');
 
 // =========================== User Account ============================================== //
-// get user email
+// get user account email
 const getUserByEmail = async (email) => {
     return await databaseTransaction(async (sqlCon) => {
         const [userAccount] = await sqlCon.query('SELECT * FROM customer_account WHERE email = ?', [email]);
@@ -14,12 +14,48 @@ const getUserByEmail = async (email) => {
     
 };
 
+// get user information by email
 const getUserInfoByEmail = async (email) => {
     return await databaseTransaction(async (sqlCon) => {
         const [userInfo] = await sqlCon.query('SELECT * FROM customer WHERE email = ?', [email]);
         return userInfo.length > 0 ? userInfo[0] : null;
     });
 }
+
+// delete user account by email
+const deleteUserByEmail = async (email) => {
+    return await databaseTransaction(async (sqlCon) => {
+        const [userAccount] = await sqlCon.query('SELECT * FROM customer_account WHERE email = ?', [email]);
+        if(userAccount.length === 0){
+            throw new Error('User not found');
+        }
+        const accountID = userAccount[0].accountID;
+        const [deleteUser] = await sqlCon.query('DELETE FROM customer_account WHERE email = ?', [email]);
+        if(deleteUser.affectedRows === 0){
+            throw new Error('Failed to delete user');
+        }
+        const [deleteCustomer] = await sqlCon.query('DELETE FROM customer WHERE accountID = ?', [accountID]);
+        if(deleteCustomer.affectedRows === 0){
+            throw new Error('Failed to delete user');
+        }
+    });
+}
+
+const deleteExpiredUnverifiedUsers = async () => {
+    return await databaseTransaction(async (sqlCon) => {
+        // Find all expired, unverified accounts
+        const [expiredAccounts] = await sqlCon.query(
+            'SELECT accountID, email FROM customer_account WHERE is_verified = 0 AND verificationExpiresAt < NOW()'
+        );
+        for (const account of expiredAccounts) {
+            // Delete from customer_account
+            await sqlCon.query('DELETE FROM customer_account WHERE accountID = ?', [account.accountID]);
+            // Delete from customer
+            await sqlCon.query('DELETE FROM customer WHERE accountID = ?', [account.accountID]);
+        }
+        return expiredAccounts.length;
+    });
+};
 // update user account information
 const updateUserAccount = async (email, newPassword) => {
     return await databaseTransaction(async (sqlCon) =>{
@@ -41,12 +77,12 @@ const updateUserAccount = async (email, newPassword) => {
 }
 
 // insert user account information
-const insertUserAccount = async (email, hashedPassword, isVerified, firstName, lastName) => {
+const insertUserAccount = async (email, hashedPassword, isVerified, firstName, lastName, expiration) => {
     let isCreated = false;
 
     return await databaseTransaction(async (sqlCon) => {
         // Store the user in the database
-        const [newCustomerAccount] = await sqlCon.query('INSERT INTO customer_account (email, password, is_verified) VALUES (?, ?, ?)', [email, hashedPassword, isVerified]);
+        const [newCustomerAccount] = await sqlCon.query('INSERT INTO customer_account (email, password, is_verified, verification_expires_at) VALUES (?, ?, ?, ?)', [email, hashedPassword, isVerified, expiration]);
         const userId = newCustomerAccount.insertId; // Get the ID of the newly created user
         // Check if the user was created successfully
         if (newCustomerAccount.affectedRows === 0) {
@@ -65,6 +101,8 @@ const insertUserAccount = async (email, hashedPassword, isVerified, firstName, l
         return isCreated;
     });
 }
+
+
 
 // insert or find user by google-oauth
 const findOrCreateUser = async (profile) => {
@@ -144,30 +182,17 @@ const updateVerificationStatus = async (email) => {
         return isVerified; // Assuming you want the first result
     });
 }
-// =========================== User Basic Information ============================================== //
-// get user basic information
-
-const getUserBasicInfo = async (email) => {
-    return await databaseTransaction(async (sqlCon) =>{
-        const [userInfo] = await sqlCon.query('SELECT * FROM customer WHERE email = ?', [email]);
-
-        if(userInfo.length === 0) {
-            throw new Error('User not found');
-        }
-
-        return userInfo[0]; // Assuming you want the first result
-    })
-}
 
 // User Account Information
 module.exports = {
     getUserByEmail,
     getUserInfoByEmail,
+    deleteUserByEmail,
+    deleteExpiredUnverifiedUsers,
     updateUserAccount,
     insertUserAccount,
     findOrCreateUser,
     sendVerificationEmail,
-    updateVerificationStatus,
-    getUserBasicInfo
+    updateVerificationStatus
 };
 

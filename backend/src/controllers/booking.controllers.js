@@ -2,6 +2,7 @@
 const {getUserBasicInfo} = require('../model/user.models');
 const {getBookedDates, getPackageInfo} = require('../model/booking.models')
 const {createBookingInfo} = require('../model/booking.models')
+
 // default value retrieved from the customer basic information table in db
 const bookingFormCustomerInfo = async (req, res) => {
     try{
@@ -70,7 +71,12 @@ const fetchBookedDates = async (req, res) => {
 const fetchPackageInfo = async (req, res) => {
    try{
         // get package information by package code
-        const packageCode = req.params.packageCode;
+        const customerID = req.customerID;
+        if(!customerID){
+            return res.status(400).json({ error: 'Missing required customer information', redirect: '/' });
+        }
+
+        const packageCode = req.body.package;
         const packageInfo = await getPackageInfo(packageCode);
         
         if(packageInfo.length === 0) {

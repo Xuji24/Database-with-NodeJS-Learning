@@ -24,9 +24,9 @@ const getBookedDates = async () => {
 
 
 // get package information by package code
-const getPackageInfo = async (packageCode) => {
+const getPackageInfo = async (packageID) => {
     return await databaseTransaction(async (sqlCon) => {
-        const [packageInfo] = await sqlCon.query('SELECT * FROM package WHERE packageCode = ?', [packageCode]);
+        const [packageInfo] = await sqlCon.query('SELECT * FROM package WHERE packageID = ?', [packageID]);
 
         if(packageInfo.length === 0) {
             throw new Error('Package not found');

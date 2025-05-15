@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { sendInquiry} = require('../controller/inquiry.controllers');
+const { sendInquiry} = require('../controllers/inquiry.controllers');
 
 const {verifyToken} = require('../middlewares/auth.middleware');
 

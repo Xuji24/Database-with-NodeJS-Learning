@@ -33,13 +33,27 @@ const registerUser = async (req, res) =>{
 
     const userExist = await getUserByEmail(email);
     if (userExist){
-       return res.status(400).json({ message: 'Email already exists' });
+        if (!userExist.isVerified) {
+            const now = new Date();
+            if (userExist.verificationExpiresAt && now > new Date(userExist.verificationExpiresAt)) {
+                // Delete or overwrite the expired unverified account
+                await deleteUserByEmail(email); // Implement this function
+            } else {
+                await sendVerificationEmail(email);
+                return res.status(400).json({ 
+                    message: 'Account exists but is not verified. Verification email resent. Please check your inbox.' 
+                });
+            }
+        } else {
+            return res.status(400).json({ message: 'Email already exists' });
+        }
     }
 
     passwordStrength(password, res);
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    isCreated = await insertUserAccount(email, hashedPassword, isVerified, firstName, lastName);
+    const expiration = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+    isCreated = await insertUserAccount(email, hashedPassword, isVerified, firstName, lastName, expiration);
 
     // Use the SAME sqlCon here
     await sendVerificationEmail(email);               
