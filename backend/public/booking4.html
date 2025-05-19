@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Payment - Step 4</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #fff;
+            color: #222;
+        }
+        /* Header */
+        .header-bar {
+            width: 100%;
+            background: #f6f6f6;
+            padding: 16px 0 0 0;
+            position: relative;
+            min-height: 80px;
+            box-sizing: border-box;
+        }
+        .header-content {
+            width: 90%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .menu-btn {
+            background: #4b4a2f;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 32px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .menu-btn:hover {
+            background: #6b6a4a;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .menu-btn:active {
+            background: #36351f;
+            transform: scale(0.98);
+        }
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -10px;
+        }
+        .logo img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 2px;
+        }
+        .logo span {
+            font-size: 13px;
+            color: #7c6c3a;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .profile {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #f1f1f1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e0e0e0;
+        }
+        .profile img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Main Content */
+        .main-content {
+            width: 90%;
+            max-width: 900px;
+            margin: 32px auto 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        .form-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .form-header .step-indicator {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #f6f6f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .form-header .step-indicator::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            border: 4px solid #4caf50;
+            border-right-color: #e0e0e0;
+            border-bottom-color: #e0e0e0;
+            z-index: 0;
+        }
+        .form-header .step-indicator span {
+            position: relative;
+            z-index: 1;
+            font-size: 22px;
+            font-weight: bold;
+            color: #4caf50;
+        }
+        .form-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .form-desc {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 24px;
+        }
+        /* Payment Options */
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin-bottom: 18px;
+        }
+        .payment-option {
+            display: flex;
+            align-items: center;
+            border: 2px solid #cfcfcf;
+            border-radius: 10px;
+            padding: 18px 24px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            background: #fff;
+            transition: border 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+        .payment-option.selected {
+            border: 2.5px solid #4caf50;
+            box-shadow: 0 4px 18px 0 rgba(76,175,80,0.07);
+            background: #f6fff6;
+        }
+        .payment-option input[type="radio"] {
+            accent-color: #4caf50;
+            width: 22px;
+            height: 22px;
+            margin-right: 18px;
+        }
+        .bdo-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1a237e;
+            letter-spacing: 1px;
+        }
+        .bdo-logo span {
+            color: #ffb300;
+        }
+        .gcash-logo {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1976d2;
+            letter-spacing: 1px;
+        }
+        /* GCash Section */
+        .gcash-section {
+            margin: 24px 0 0 0;
+            padding: 18px 24px;
+            background: #f6faff;
+            border-radius: 10px;
+            border: 1.5px solid #b3e5fc;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            box-sizing: border-box;
+        }
+        .gcash-section.active {
+            display: flex;
+        }
+        .gcash-section .gcash-logo {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1976d2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .gcash-section .gcash-logo img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+        .amount-label {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 8px 0 2px 0;
+        }
+        .amount-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #222;
+            margin-left: 6px;
+        }
+        .mobile-label {
+            font-size: 1rem;
+            color: #555;
+            margin-bottom: 4px;
+        }
+        .mobile-input {
+            width: 220px;
+            max-width: 100%;
+            padding: 10px 12px;
+            border: 1.5px solid #cfcfcf;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            outline: none;
+            background: #fafafa;
+            margin-bottom: 8px;
+            transition: border 0.2s;
+        }
+        .mobile-input:focus {
+            border-color: #4caf50;
+            background: #fff;
+        }
+        /* Actions */
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 18px;
+        }
+        .action-btn {
+            min-width: 100px;
+            padding: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: #4b4a2f;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .action-btn:hover {
+            background: #6b6a4a;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .action-btn:active {
+            background: #36351f;
+            transform: scale(0.98);
+        }
+        .action-btn[disabled] {
+            background: #bdbdbd;
+            cursor: not-allowed;
+        }
+        /* Footer */
+        footer {
+            background: #181818;
+            color: #fff;
+            padding: 32px 0 0 0;
+            margin-top: 48px;
+        }
+        .footer-content {
+            width: 90%;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .footer-col {
+            flex: 1 1 180px;
+            margin-bottom: 24px;
+        }
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .footer-logo img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .footer-desc {
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .footer-btn {
+            background: #fff;
+            color: #4b4a2f;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, transform 0.1s;
+        }
+        .footer-btn:hover {
+            background: #4b4a2f;
+            color: #fff;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .footer-btn:active {
+            background: #36351f;
+            color: #fff;
+            transform: scale(0.98);
+        }
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 12px 0;
+        }
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        .footer-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover {
+            color: #fff;
+        }
+        .footer-contact {
+            font-size: 0.97rem;
+            color: #e0e0e0;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .footer-map {
+            width: 220px;
+            height: 110px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            border: 2px solid #fff;
+        }
+        .footer-socials {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+        }
+        .footer-socials a {
+            color: #fff;
+            font-size: 1.3rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-socials a:hover {
+            color: #4caf50;
+        }
+        .footer-bottom {
+            width: 90%;
+            margin: 0 auto;
+            border-top: 1px solid #333;
+            padding: 12px 0 18px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #bdbdbd;
+        }
+        .footer-bottom a {
+            color: #bdbdbd;
+            text-decoration: none;
+            margin-left: 18px;
+            transition: color 0.2s;
+        }
+        .footer-bottom a:hover {
+            color: #fff;
+        }
+        @media (max-width: 900px) {
+            .main-content, .footer-content, .footer-bottom {
+                width: 98%;
+            }
+            .footer-map {
+                width: 100%;
+                min-width: 180px;
+            }
+        }
+        @media (max-width: 700px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 18px;
+            }
+            .footer-map {
+                width: 100%;
+                min-width: 120px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-bar">
+        <div class="header-content">
+            <button class="menu-btn">Menu</button>
+            <div class="logo">
+                <img src="https://i.imgur.com/8Km9tLL.png" alt="Logo">
+                <span>GCREATIVES.PH</span>
+            </div>
+            <div class="profile">
+                <img src="https://i.imgur.com/1XqgU6F.png" alt="Profile">
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="form-header">
+            <div>
+                <div class="form-title">Payment Information</div>
+                <div class="form-desc">Please select a payment method for downpayment.</div>
+            </div>
+            <div class="step-indicator"><span>4</span></div>
+        </div>
+        <form id = "bookingForm" action = "/api/booking/booking-payment" method = "POST">
+            <div class="payment-options">
+                <label class="payment-option" id="bdo-option">
+                    <input type="radio" name="paymentMethod" value="bdo">
+                    <span class="bdo-logo">BD<span>O</span></span>
+                </label>
+                <label class="payment-option selected" id="gcash-option">
+                    <input type="radio" name="paymentMethod" value="gcash" checked>
+                    <span class="gcash-logo">GCash</span>
+                </label>
+            </div>
+            <div class="gcash-section active" id="gcash-section">
+                <div class="gcash-logo">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/GCash_logo.svg" alt="GCash">
+                    GCash
+                </div>
+                <div>
+                    <span class="amount-label">Amount to pay:</span>
+                    <span class="amount-value">₱50,000</span>
+                </div>
+                <div class="mobile-label">Input your Mobile number</div>
+                <input class="mobile-input" type="text" name = "mobileNumber" placeholder="+63" maxlength="11" required>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="action-btn" id="back-btn">Back</button>
+                <button type="submit" class="action-btn" id="done-btn">Done</button>
+            </div>
+        </form>
+    </div>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="https://i.imgur.com/8Km9tLL.png" alt="Logo">
+                    <span>GCREATIVES.PH</span>
+                </div>
+                <div class="footer-desc">
+                    Our services ensure that every event is treated with utmost care and dedication, creating unforgettable experiences made exactly how you want them.
+                </div>
+                <button class="footer-btn">Reserve Now</button>
+            </div>
+            <div class="footer-col">
+                <div class="footer-title" style="font-weight:600;margin-bottom:8px;">Quick Links</div>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Packages</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <div class="footer-title" style="font-weight:600;margin-bottom:8px;">Get in Touch</div>
+                <div class="footer-contact"><span>📍</span> Km. 38, Pulong Buhangin, Bilucao St., Sta. Maria, 3022 Bulacan</div>
+                <div class="footer-contact"><span>✉️</span> gcreatives.ph@gmail.com</div>
+                <div class="footer-contact"><span>📞</span> 09458170622</div>
+            </div>
+            <div class="footer-col">
+                <div class="footer-title" style="font-weight:600;margin-bottom:8px;">Map</div>
+                <div class="footer-map">
+                    <iframe src="https://maps.google.com/maps?q=Birmingham&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                </div>
+                <div class="footer-socials">
+                    <a href="#"><span>🌐</span></a>
+                    <a href="#"><span>📸</span></a>
+                    <a href="#"><span>🎵</span></a>
+                    <a href="#"><span>▶️</span></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2025 GCreatives.PH. All rights reserved.</span>
+            <span>
+                <a href="#">Terms of Service</a>
+                <a href="#">Privacy Policy</a>
+            </span>
+        </div>
+    </footer>
+    <script>
+        // Payment option selection logic
+        const bdoOption = document.getElementById('bdo-option');
+        const gcashOption = document.getElementById('gcash-option');
+        const gcashSection = document.getElementById('gcash-section');
+        bdoOption.addEventListener('click', function() {
+            bdoOption.classList.add('selected');
+            gcashOption.classList.remove('selected');
+            gcashSection.classList.remove('active');
+            bdoOption.querySelector('input').checked = true;
+        });
+        gcashOption.addEventListener('click', function() {
+            gcashOption.classList.add('selected');
+            bdoOption.classList.remove('selected');
+            gcashSection.classList.add('active');
+            gcashOption.querySelector('input').checked = true;
+        });
+    </script>
+    <script src = "js/booking.js"></script>
+</body>
+</html>

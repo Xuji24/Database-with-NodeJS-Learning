@@ -1,15 +1,14 @@
 const {jwtSecretKey} = require('../config/env');
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const axios = require('axios');
 const {
     insertUserAccount, 
     sendVerificationEmail, 
     updateVerificationStatus,
-    getUserByEmail,
+    getUserAccountByEmail,
     getUserInfoByEmail,
     updateUserAccount
-} = require('../model/user.models');
+} = require('../models/user.models');
 const sendEmail = require('../utils/email.sender');
 const checkFields = require('../utils/validation.utils');
 // =========================== User Validation ============================================== //
@@ -31,7 +30,7 @@ const registerUser = async (req, res) =>{
        return res.status(400).json({ message: 'Invalid email format' });
     }
 
-    const userExist = await getUserByEmail(email);
+    const userExist = await getUserAccountByEmail(email);
     if (userExist){
         if (!userExist.isVerified) {
             const now = new Date();
@@ -59,7 +58,10 @@ const registerUser = async (req, res) =>{
     await sendVerificationEmail(email);               
    
    if(isCreated){
-        return res.status(200).json({ message: 'Registered successfully. Check your email to verify your account.' });
+        return res.status(200).json({ 
+            message: 'Registered successfully. Check your email to verify your account.', 
+            data: {email, firstName, lastName} 
+        });
    }
 };
 
@@ -80,49 +82,75 @@ const verifyEmail = async (req, res) => {
 };
 
 // Login user
-const loginUser = async (req, res) => {
-    const { email, password } = req.body;
-     // Check for empty fields
-    checkFields(email, password, null, res);
 
-    // Check if the email exist
-    const userExist = await getUserByEmail(email);
-    if(!userExist){
-        return res.status(400).json({message: 'Email does not exist'});
-    }
-    if(!userExist.password === "" || userExist.password === null){
-        return res.status(400).json({message: 'User does not exist'});
-    }
-    
-    const passwordMatch = await bcrypt.compare(password, userExist.password);
-    if(!passwordMatch){
-        return res.status(400).json({ message: 'Incorrect email or password'});
-    }
-    console.log('Logging in user: ', userExist);
-
-    const user = await getUserInfoByEmail(email);
-    console.log(user.full_name)
-    // Generate a JWT token
-    const token = jwt.sign(
-        { 
-            // Get id and email of the current user
-            id: user.accountID,
-            email: user.email
-
-        }, 
-        jwtSecretKey, 
-        { expiresIn: '1h' }
-    );
-        
-    // or redirect to another page and use the token
-    //New Progress
-    return res.status(200).json({ 
-        message: `Login successful, welcome ${user.full_name}`,
-        user: user, 
-        token: token 
-    }); // Send a JSON response with the token   
+function createToken(userId) {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
+  });
 }
 
+const loginUser = async (req, res) => {
+    try{
+        const { email, password } = req.body;
+            // Check for empty fields
+        checkFields(email, password, null, res);
+
+        // Check if the email exist
+        const userExist = await getUserAccountByEmail(email);
+        if(!userExist){
+            return res.status(400).json({message: 'Email does not exist'});
+        }
+        if(userExist.password === "" || !userExist.password){
+            return res.status(400).json({message: 'User does not exist'});
+        }
+        if(!userExist.is_verified){
+            return res.status(400).json({ message: 'Email not verified. Please check your inbox for the verification email. It expires after 24 hours of register. ' });
+        }
+        const passwordMatch = await bcrypt.compare(password, userExist.password);
+        if(!passwordMatch){
+            return res.status(400).json({ message: 'Incorrect email or password'});
+        }
+
+        //const user = await getUserInfoByEmail(email);
+
+        // Generate a JWT token
+        // const token = jwt.sign(
+        //     { 
+        //         // Get id and email of the current user
+        //         id: user.accountID,
+        //         email: user.email
+
+        //     }, 
+        //     jwtSecretKey, 
+        //     { expiresIn: '1h' }
+        // );
+        // or redirect to another page and use the token
+        // return res.status(200).json({ 
+        //     message: `Login successful, welcome ${user.full_name}`,
+        //     user: user, 
+        //     token: token,
+        //     redirect: '/'
+        // });
+        const token = createToken(userExist.accountID);
+        
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict', // Or 'Lax' if using across subdomains
+            maxAge: 24 * 60 * 60 * 1000, // 1 day
+        });
+        res.redirect('/packages');
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({ message: 'Login failed' });
+    }
+}
+const logout = (req, res) => {
+    res.clearCookie('jwt');
+    res.json({ message: 'Logged out' });
+}
+
+// Login Logout OAuth
 const loginSuccess = (req, res) => {
     const name = req.user.full_name|| "Guest";
     res.status(200).json({
@@ -130,7 +158,6 @@ const loginSuccess = (req, res) => {
     user: req.user
   });
 };
-//New Progress
 const logoutUser = async (req, res) => {
     try {
         // Revoke the Google OAuth token if it exists
@@ -240,11 +267,13 @@ const resetPassword = async (req, res) => {
         return res.status(500).json({ message: 'Password did not reset' });
     }
 }
+
 module.exports = {
     registerUser,
     verifyEmail,
     loginUser,
     loginSuccess,
+    logout,
     logoutUser,
     forgotPassword,
     resetPassword

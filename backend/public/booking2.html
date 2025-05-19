@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Event Information - Booking Step 2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS Provided by User -->
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #fff;
+            color: #222;
+        }
+        /* Header */
+        .header-bar {
+            width: 100%;
+            background: #f6f6f6;
+            padding: 16px 0 0 0;
+            position: relative;
+            min-height: 80px;
+            box-sizing: border-box;
+        }
+        .header-content {
+            width: 90%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .menu-btn {
+            background: #4b4a2f;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 32px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .menu-btn:hover {
+            background: #6b6a4a;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .menu-btn:active {
+            background: #36351f;
+            transform: scale(0.98);
+        }
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -10px;
+        }
+        .logo img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 2px;
+        }
+        .logo span {
+            font-size: 13px;
+            color: #7c6c3a;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .profile {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #f1f1f1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e0e0e0;
+        }
+        .profile img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Main Content */
+        .main-content {
+            width: 90%;
+            max-width: 900px;
+            margin: 32px auto 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+        .form-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .form-header .step-indicator {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #f6f6f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        .form-header .step-indicator::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            border: 4px solid #4caf50;
+            border-right-color: #e0e0e0;
+            border-bottom-color: #e0e0e0;
+            z-index: 0;
+        }
+        .form-header .step-indicator span {
+            position: relative;
+            z-index: 1;
+            font-size: 22px;
+            font-weight: bold;
+            color: #4caf50;
+        }
+        .form-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .form-desc {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 24px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .form-row {
+            display: flex;
+            gap: 18px;
+            margin-bottom: 0;
+        }
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        label {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        input[type="text"], input[type="email"], input[type="tel"] {
+            padding: 10px 12px;
+            border: 1.5px solid #cfcfcf;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+            transition: border 0.2s;
+            background: #fafafa;
+        }
+        input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus {
+            border-color: #4caf50;
+            background: #fff;
+        }
+        .phone-input {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .flag {
+            width: 32px;
+            height: 22px;
+            border-radius: 3px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            margin-right: 2px;
+        }
+        .country-code {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-right: 4px;
+            color: #222;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 18px;
+        }
+        .action-btn {
+            min-width: 100px;
+            padding: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: #4b4a2f;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .action-btn:hover {
+            background: #6b6a4a;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .action-btn:active {
+            background: #36351f;
+            transform: scale(0.98);
+        }
+        .action-btn[disabled] {
+            background: #bdbdbd;
+            cursor: not-allowed;
+        }
+
+        /* Footer */
+        footer {
+            background: #181818;
+            color: #fff;
+            padding: 32px 0 0 0;
+            margin-top: 48px;
+        }
+        .footer-content {
+            width: 90%;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .footer-col {
+            flex: 1 1 180px;
+            margin-bottom: 24px;
+        }
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .footer-logo img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .footer-desc {
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .footer-btn {
+            background: #fff;
+            color: #4b4a2f;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, transform 0.1s;
+        }
+        .footer-btn:hover {
+            background: #4b4a2f;
+            color: #fff;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .footer-btn:active {
+            background: #36351f;
+            color: #fff;
+            transform: scale(0.98);
+        }
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 12px 0;
+        }
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        .footer-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover {
+            color: #fff;
+        }
+        .footer-contact {
+            font-size: 0.97rem;
+            color: #e0e0e0;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .footer-map {
+            width: 220px;
+            height: 110px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            border: 2px solid #fff;
+        }
+        .footer-socials {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+        }
+        .footer-socials a {
+            color: #fff;
+            font-size: 1.3rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-socials a:hover {
+            color: #4caf50;
+        }
+        .footer-bottom {
+            width: 90%;
+            margin: 0 auto;
+            border-top: 1px solid #333;
+            padding: 12px 0 18px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #bdbdbd;
+        }
+        .footer-bottom a {
+            color: #bdbdbd;
+            text-decoration: none;
+            margin-left: 18px;
+            transition: color 0.2s;
+        }
+        .footer-bottom a:hover {
+            color: #fff;
+        }
+
+        @media (max-width: 900px) {
+            .main-content, .footer-content, .footer-bottom {
+                width: 98%;
+            }
+            .footer-map {
+                width: 100%;
+                min-width: 180px;
+            }
+        }
+        @media (max-width: 700px) {
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 18px;
+            }
+            .footer-map {
+                width: 100%;
+                min-width: 120px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+        }
+        /* Custom for textarea shadow */
+        .textarea-shadow {
+            box-shadow: 0 4px 18px 0 rgba(0,0,0,0.06);
+            background: #fff;
+            border-radius: 10px;
+            border: none;
+            padding: 16px 14px;
+            font-size: 1rem;
+            min-height: 80px;
+            resize: vertical;
+            width: 100%;
+            margin-top: 2px;
+        }
+        .textarea-shadow:focus {
+            outline: 2px solid #4caf50;
+        }
+        /* Custom for select and date */
+        select, input[type="date"] {
+            padding: 10px 12px;
+            border: 1.5px solid #cfcfcf;
+            border-radius: 6px;
+            font-size: 1rem;
+            background: #fafafa;
+            transition: border 0.2s;
+        }
+        select:focus, input[type="date"]:focus {
+            border-color: #4caf50;
+            background: #fff;
+            outline: none;
+        }
+        /* Custom for price input */
+        .price-input {
+            background: #fafafa;
+            border: 1.5px solid #cfcfcf;
+            border-radius: 6px;
+            font-size: 1rem;
+            padding: 10px 12px;
+            width: 100%;
+        }
+        .price-input:focus {
+            border-color: #4caf50;
+            background: #fff;
+            outline: none;
+        }
+        /* Calendar icon for date */
+        .date-group {
+            position: relative;
+        }
+        .date-group input[type="text"] {
+            padding-right: 38px;
+        }
+        .calendar-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #7c6c3a;
+            font-size: 1.2rem;
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-bar">
+        <div class="header-content">
+            <button class="menu-btn"><i class="fa fa-bars" style="margin-right:8px"></i>Menu</button>
+            <div class="logo">
+                <img src="https://i.ibb.co/6wQ6w1C/logo-leaf.png" alt="Logo">
+                <span>GCREATIVES.PH</span>
+            </div>
+            <button class="menu-btn" style="background:#6b6a4a;"><i class="fa fa-calendar-alt" style="margin-right:8px"></i>Schedules</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" style="padding: 36px 32px 32px 32px;">
+        <div class="form-header">
+            <div>
+                <div class="form-title">Event Information</div>
+                <div class="form-desc">Please fill out the form below with your basic information.</div>
+            </div>
+            <div class="step-indicator">
+                <span>2</span>
+            </div>
+        </div>
+        <form id = "bookingForm" action = "/api/booking/booking-event" method = "POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="package">Selected Package</label>
+                    <select id="package" name="package">
+                        <option name = "selectedPackage" value = "1">Package 1</option>
+                        <option name = "selectedPackage" value = "2">Package 2</option>
+                        <option name = "selectedPackage" value = "3">Package 3</option>
+                        <option name = "selectedPackage" value = "4">Package 4</option>
+                        <option name = "selectedPackage" value = "5">Package 5</option>
+                        <option name = "selectedPackage" value = "6">Package 6</option>
+                        <option name = "selectedPackage" value = "7">Package 7</option>
+                        <option name = "selectedPackage" value = "8">Package 8</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="price">Price</label>
+                    <input id="price" name="price" class="price-input" type="text" value="₱150,000" readonly>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group date-group">
+                    <label for="event-date">Event Date:</label>
+                    <!--<input id="event-date" name="eventDate" type="date" autocomplete="off">-->
+                    <input type="text" id="eventDate" name="eventDate" placeholder="Select event date" autocomplete="off" data-range-months="6">
+                </div>
+                <div class="form-group">
+                    <label for="event-type">Event</label>
+                    <select id="event-type" name="event">
+                        <option name = "event" value = "Wedding Film">Wedding Film</option>
+                        <option name = "event" value = "Birthday">Birthday</option>
+                        <option name = "event" value = "Corporate">Corporate</option>
+                        <option name = "event" value = "Debut">Debut</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="location">Location:</label>
+                    <input id="location" name="location" type="text" placeholder="">
+                </div>
+                <div class="form-group">
+                    <label for="theme">Event-Theme:</label>
+                    <input id="theme" name="eventTheme" type="text" placeholder="">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="concern">Other Concern</label>
+                <textarea id="concern" name="otherConcern" class="textarea-shadow" placeholder=""></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="action-btn" style="background:#fff; color:#222; border:1.5px solid #cfcfcf;">Back</button>
+                <button type="submit" class="action-btn">Next</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="https://i.ibb.co/6wQ6w1C/logo-leaf.png" alt="Logo">
+                    <span style="font-weight:600; font-size:1.1rem;">GCREATIVES.PH</span>
+                </div>
+                <div class="footer-desc">
+                    Our services ensure that every event is executed without error and crafted to create enduring, unforgettable experiences. <br>We make every detail how you want them.
+                </div>
+                <button class="footer-btn">Reserve Now</button>
+            </div>
+            <div class="footer-col">
+                <div style="font-weight:600; margin-bottom:8px;">Quick Links</div>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Packages</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <div style="font-weight:600; margin-bottom:8px;">Get in Touch</div>
+                <div class="footer-contact"><i class="fa fa-map-marker-alt"></i> Km. 38, Pulong Buhangin, Buluceo St, <br> Sta. Maria, 3022 Bulacan</div>
+                <div class="footer-contact"><i class="fa fa-envelope"></i> gcreatives.ph@gmail.com</div>
+                <div class="footer-contact"><i class="fa fa-phone"></i> 09454870622</div>
+            </div>
+            <div class="footer-col" style="max-width:240px;">
+                <div class="footer-map">
+                    <iframe src="https://maps.google.com/maps?q=Birmingham&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                </div>
+                <div style="font-size:0.95rem; color:#e0e0e0;">Dive deeper! Watch more videos at:</div>
+                <div class="footer-socials">
+                    <a href="#"><i class="fab fa-facebook-square"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2025 GCreatives.PH &nbsp; All rights reserved.</span>
+            <span>
+                <a href="#">Terms of Service</a>
+                <a href="#">Private Policy</a>
+            </span>
+        </div>
+    </footer>
+
+    <script src = "js/booking.js"></script>
+    <script>
+        fetch('/api/booking/booked-dates')
+            .then(res => res.json())
+            .then(data => {
+            console.log("Fully booked dates:", data);
+            flatpickr("#eventDate", {
+                minDate: "today",
+                maxDate: new Date().fp_incr(90), // 3 months ahead as example
+                disable: data,
+                dateFormat: "Y-m-d"
+            });
+        });
+    </script>
+</body>
+</html>

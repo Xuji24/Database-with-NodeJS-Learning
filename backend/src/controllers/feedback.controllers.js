@@ -1,5 +1,5 @@
 // new progress
-const {retrieveFeedback} = require('../model/feedback.models');
+const {retrieveFeedback} = require('../models/feedback.models');
 
 // get feedbacks from the database
 // This function retrieves feedbacks from the database and returns them as a JSON response.

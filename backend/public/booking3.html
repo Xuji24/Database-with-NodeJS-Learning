@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Terms and Condition - Booking</title>
+    <meta name="viewport" content="width=430, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #fff;
+            color: #222;
+        }
+        /* Header */
+        .header-bar {
+            width: 100%;
+            background: #f6f6f6;
+            padding: 16px 0 0 0;
+            position: relative;
+            min-height: 80px;
+            box-sizing: border-box;
+        }
+        .header-content {
+            width: 90%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .menu-btn {
+            background: #4b4a2f;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 7px 22px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .menu-btn:hover {
+            background: #6b6a4a;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .menu-btn:active {
+            background: #36351f;
+            transform: scale(0.98);
+        }
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -10px;
+        }
+        .logo img {
+            width: 48px;
+            height: 48px;
+            object-fit: contain;
+            margin-bottom: 2px;
+        }
+        .logo span {
+            font-size: 13px;
+            color: #7c6c3a;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .profile {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #f1f1f1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e0e0e0;
+        }
+        .profile img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Main Content */
+        .main-content {
+            width: 96%;
+            max-width: 430px;
+            margin: 24px auto 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 18px 0 rgba(0,0,0,0.06);
+            padding: 0 0 24px 0;
+        }
+        .form-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 0 24px;
+            margin-bottom: 0;
+        }
+        .form-header .step-indicator {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #f6f6f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-top: 8px;
+        }
+        .form-header .step-indicator::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; right: 0; bottom: 0;
+            border-radius: 50%;
+            border: 4px solid #4caf50;
+            border-right-color: #e0e0e0;
+            border-bottom-color: #e0e0e0;
+            z-index: 0;
+        }
+        .form-header .step-indicator span {
+            position: relative;
+            z-index: 1;
+            font-size: 22px;
+            font-weight: bold;
+            color: #4caf50;
+        }
+        .form-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 2px;
+            margin-top: 24px;
+            padding: 0 24px;
+        }
+        .form-desc {
+            color: #555;
+            font-size: 0.92rem;
+            margin-bottom: 16px;
+            padding: 0 24px;
+        }
+        .terms-section {
+            padding: 0 24px;
+        }
+        .terms-section h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin: 22px 0 8px 0;
+            text-align: center;
+        }
+        .terms-section p, .terms-section ul {
+            font-size: 0.97rem;
+            color: #222;
+            margin: 0 0 10px 0;
+            line-height: 1.5;
+        }
+        .terms-section ul {
+            padding-left: 18px;
+        }
+        .terms-section .sub {
+            font-size: 0.97rem;
+            color: #555;
+            margin-bottom: 10px;
+        }
+        .terms-section .small {
+            font-size: 0.93rem;
+            color: #555;
+        }
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 18px 0 0 0;
+            padding: 0 24px;
+        }
+        .checkbox-row input[type="checkbox"] {
+            accent-color: #4caf50;
+            width: 18px;
+            height: 18px;
+        }
+        .checkbox-row label {
+            font-size: 0.97rem;
+            color: #222;
+            cursor: pointer;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 22px;
+            padding: 0 24px;
+            gap: 12px;
+        }
+        .action-btn {
+            min-width: 90px;
+            padding: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            background: #4b4a2f;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .action-btn:hover {
+            background: #6b6a4a;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .action-btn:active {
+            background: #36351f;
+            transform: scale(0.98);
+        }
+        .action-btn[disabled] {
+            background: #bdbdbd;
+            cursor: not-allowed;
+        }
+        /* Footer */
+        footer {
+            background: #181818;
+            color: #fff;
+            padding: 32px 0 0 0;
+            margin-top: 32px;
+        }
+        .footer-content {
+            width: 96%;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .footer-col {
+            flex: 1 1 120px;
+            margin-bottom: 18px;
+        }
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .footer-logo img {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .footer-desc {
+            font-size: 0.93rem;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        .footer-btn {
+            background: #fff;
+            color: #4b4a2f;
+            border: none;
+            border-radius: 20px;
+            padding: 7px 18px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, transform 0.1s;
+        }
+        .footer-btn:hover {
+            background: #4b4a2f;
+            color: #fff;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .footer-btn:active {
+            background: #36351f;
+            color: #fff;
+            transform: scale(0.98);
+        }
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 10px 0;
+        }
+        .footer-links li {
+            margin-bottom: 6px;
+        }
+        .footer-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover {
+            color: #fff;
+        }
+        .footer-contact {
+            font-size: 0.97rem;
+            color: #e0e0e0;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .footer-map {
+            width: 180px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            border: 2px solid #fff;
+        }
+        .footer-socials {
+            display: flex;
+            gap: 10px;
+            margin-top: 6px;
+        }
+        .footer-socials a {
+            color: #fff;
+            font-size: 1.2rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-socials a:hover {
+            color: #4caf50;
+        }
+        .footer-bottom {
+            width: 96%;
+            margin: 0 auto;
+            border-top: 1px solid #333;
+            padding: 10px 0 14px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.93rem;
+            color: #bdbdbd;
+        }
+        .footer-bottom a {
+            color: #bdbdbd;
+            text-decoration: none;
+            margin-left: 12px;
+            transition: color 0.2s;
+        }
+        .footer-bottom a:hover {
+            color: #fff;
+        }
+        @media (max-width: 700px) {
+            .main-content, .footer-content, .footer-bottom {
+                width: 99%;
+            }
+            .footer-content {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .footer-map {
+                width: 100%;
+                min-width: 120px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-bar">
+        <div class="header-content">
+            <button class="menu-btn">Menu</button>
+            <div class="logo">
+                <img src="https://i.imgur.com/4M34hi2.png" alt="Logo">
+                <span>GCREATIVES</span>
+            </div>
+            <div class="profile">
+                <img src="https://i.imgur.com/1X1KQZB.png" alt="Profile">
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="form-header" style="margin-bottom: 0;">
+            <div>
+                <div class="form-title" style="margin-bottom: 0;">Terms and Condition</div>
+                <div class="form-desc" style="margin-bottom: 0;">Please fill out the form below with your basic information.</div>
+            </div>
+            <div class="step-indicator">
+                <span>3</span>
+            </div>
+        </div>
+        <div class="terms-section">
+            <p class="sub" style="margin-top: 10px;">
+                All necessary photo/video permits, location fees, or access permissions required for the event must be obtained and paid for by the Client. GCREATIVES is not responsible for securing permits or access unless otherwise agreed in writing. Failure to obtain required permits that results in denied access or limited coverage is the sole responsibility of the Client.
+            </p>
+            <h2>Ownership and Usage Rights</h2>
+            <p>
+                The Client acknowledges that they are paying for the services and final photo/video deliverables, and therefore, the ownership and usage rights to the final materials will belong to the Client. However, GCREATIVES retains the right to use selected photos or videos—final or sample—for portfolio, marketing, or promotional purposes, but only with prior written consent from the Client. This includes but is not limited to usage on websites, social media, print materials, and advertisements. The Client reserves the right to choose or limit such usage in writing.
+            </p>
+            <h2>Limitation of Liability and Force Majeure</h2>
+            <p>
+                If GCREATIVES is unable to perform this agreement in whole or in part due to fire, natural disasters, acts of God, acts of terrorism, illness, injury, or any other cause beyond the control of the parties, the company will make reasonable efforts to secure a replacement professional photographer or videographer to fulfill its obligations. If a replacement cannot be found, GCREATIVES will return 50% of the total amount paid by the Client. In such a case, GCREATIVES shall have no further liability with respect to this agreement.
+            </p>
+            <p class="small">
+                This limitation of liability also applies in the event that photographic or video materials are lost due to equipment malfunction, damaged in processing, lost in transit, or otherwise rendered unusable. In any such event, the maximum liability of [Company Name] shall not exceed the total amount paid by the Client under this agreement, and no further compensation shall be due.
+            </p>
+            <h2>Exclusivity of Services</h2>
+            <p>
+                It is understood and agreed that GCREATIVES shall be the sole professional photography/videography service provider at the event. The Client agrees that no other professional photographers or videographers will be allowed to take pictures or video at the event without prior written consent from GCREATIVES.
+            </p>
+            <h2>Non-Refundable Deposit</h2>
+            <p>
+                Upon signing this agreement by both parties, all deposits are strictly non-refundable, regardless of any changes to the event date or cancellation of the event for any reason, including but not limited to personal, medical, weather-related, or force majeure circumstances. The deposit serves as a retainer fee to reserve the date and is not transferable to another event or date unless otherwise agreed in writing by GCREATIVES.
+            </p>
+        </div>
+        <form id = "bookingForm" action = "/api/booking/booking-terms" method = "POST">
+            <div class="checkbox-row">
+                <input type="checkbox" id="agree" required>
+                <label for="agree">I confirm that I have read and accept the terms and conditions and privacy policy.</label>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="action-btn">Back</button>
+                <button type="submit" class="action-btn">Next</button>
+            </div>
+        </form>
+    </div>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="https://i.imgur.com/4M34hi2.png" alt="Logo">
+                    <span style="font-weight:600; color:#fff;">GCREATIVES</span>
+                </div>
+                <div class="footer-desc">
+                    Professional photo & video services for your events. Capture your moments with us.
+                </div>
+                <button class="footer-btn">Reserve Now</button>
+            </div>
+            <div class="footer-col">
+                <ul class="footer-links">
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Portfolios</a></li>
+                    <li><a href="#">Packages</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <div class="footer-contact">
+                    <span>📍</span> 5th St. Barangay Bagong Buhay 2, SJDM, Bulacan
+                </div>
+                <div class="footer-contact">
+                    <span>📞</span> 0912-345-6789
+                </div>
+                <div class="footer-contact">
+                    <span>✉️</span> gcreatives@gmail.com
+                </div>
+                <div class="footer-socials">
+                    <a href="#" title="Facebook">🌐</a>
+                    <a href="#" title="Instagram">📸</a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <div class="footer-map">
+                    <img src="https://i.imgur.com/6IUBw2y.png" alt="Map" style="width:100%;height:100%;object-fit:cover;">
+                </div>
+                <div class="footer-desc" style="font-size:0.9rem;">
+                    "Easiest when you shoot video on-site."
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>© 2023 GCREATIVES PH. All rights reserved.</div>
+            <div>
+                <a href="#">Terms</a>
+                <a href="#">Privacy Policy</a>
+            </div>
+        </div>
+    </footer>
+    <script src = "js/booking.js"></script>
+</body>
+</html>

@@ -6,12 +6,11 @@ const bcrypt = require('bcryptjs');
 
 // =========================== User Account ============================================== //
 // get user account email
-const getUserByEmail = async (email) => {
+const getUserAccountByEmail = async (email) => {
     return await databaseTransaction(async (sqlCon) => {
         const [userAccount] = await sqlCon.query('SELECT * FROM customer_account WHERE email = ?', [email]);
         return userAccount.length > 0 ? userAccount[0] : null;
-    });
-    
+    }); 
 };
 
 // get user information by email
@@ -45,14 +44,26 @@ const deleteExpiredUnverifiedUsers = async () => {
     return await databaseTransaction(async (sqlCon) => {
         // Find all expired, unverified accounts
         const [expiredAccounts] = await sqlCon.query(
-            'SELECT accountID, email FROM customer_account WHERE is_verified = 0 AND verificationExpiresAt < NOW()'
+            'SELECT accountID, email FROM customer_account WHERE is_verified = 0 AND verification_expires_at < NOW()'
         );
-        for (const account of expiredAccounts) {
-            // Delete from customer_account
-            await sqlCon.query('DELETE FROM customer_account WHERE accountID = ?', [account.accountID]);
-            // Delete from customer
-            await sqlCon.query('DELETE FROM customer WHERE accountID = ?', [account.accountID]);
+
+        if (expiredAccounts.length === 0) {
+            return 0;
         }
+
+        // Delete the corresponding customer records first
+        const accountIDs = expiredAccounts.map(account => account.accountID);
+        await sqlCon.query(
+            'DELETE FROM customer WHERE accountID IN (?)',
+            [accountIDs]
+        );
+
+        // Then delete the accounts
+        await sqlCon.query(
+            'DELETE FROM customer_account WHERE accountID IN (?)',
+            [accountIDs]
+        );
+
         return expiredAccounts.length;
     });
 };
@@ -101,8 +112,6 @@ const insertUserAccount = async (email, hashedPassword, isVerified, firstName, l
         return isCreated;
     });
 }
-
-
 
 // insert or find user by google-oauth
 const findOrCreateUser = async (profile) => {
@@ -185,7 +194,7 @@ const updateVerificationStatus = async (email) => {
 
 // User Account Information
 module.exports = {
-    getUserByEmail,
+    getUserAccountByEmail,
     getUserInfoByEmail,
     deleteUserByEmail,
     deleteExpiredUnverifiedUsers,

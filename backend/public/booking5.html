@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Booking Confirmation - GCreatives.PH</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #fff;
+            color: #222;
+        }
+        /* Header */
+        .header-bar {
+            width: 100%;
+            background: #f6f6f6;
+            padding: 16px 0 0 0;
+            position: relative;
+            min-height: 80px;
+            box-sizing: border-box;
+        }
+        .header-content {
+            width: 90%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .menu-btn {
+            background: #4b4a2f;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 32px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .menu-btn:hover {
+            background: #6b6a4a;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .menu-btn:active {
+            background: #36351f;
+            transform: scale(0.98);
+        }
+        .logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: -10px;
+        }
+        .logo img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            margin-bottom: 2px;
+        }
+        .logo span {
+            font-size: 13px;
+            color: #7c6c3a;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .profile {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #f1f1f1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #e0e0e0;
+        }
+        .profile img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        /* Main Content */
+        .main-content {
+            width: 90%;
+            max-width: 900px;
+            margin: 32px auto 0 auto;
+            background: #fff;
+            border-radius: 12px;
+            box-sizing: border-box;
+            text-align: center;
+            padding: 56px 0 64px 0;
+        }
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: #e8f5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px auto;
+        }
+        .success-icon svg {
+            width: 40px;
+            height: 40px;
+            color: #4caf50;
+            display: block;
+        }
+        .thank-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .thank-desc {
+            font-size: 1.1rem;
+            color: #222;
+            margin-bottom: 8px;
+        }
+        .thank-note {
+            font-size: 0.98rem;
+            color: #555;
+            margin-top: 8px;
+        }
+        /* Footer */
+        footer {
+            background: #181818;
+            color: #fff;
+            padding: 32px 0 0 0;
+            margin-top: 48px;
+        }
+        .footer-content {
+            width: 90%;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .footer-col {
+            flex: 1 1 180px;
+            margin-bottom: 24px;
+        }
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .footer-logo img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .footer-desc {
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .footer-btn {
+            background: #fff;
+            color: #4b4a2f;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 24px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s, transform 0.1s;
+        }
+        .footer-btn:hover {
+            background: #4b4a2f;
+            color: #fff;
+            transform: translateY(-2px) scale(1.03);
+        }
+        .footer-btn:active {
+            background: #36351f;
+            color: #fff;
+            transform: scale(0.98);
+        }
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 12px 0;
+        }
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+        .footer-links a {
+            color: #e0e0e0;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: color 0.2s;
+        }
+        .footer-links a:hover {
+            color: #fff;
+        }
+        .footer-contact {
+            font-size: 0.97rem;
+            color: #e0e0e0;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .footer-map {
+            width: 220px;
+            height: 110px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 8px;
+            border: 2px solid #fff;
+        }
+        .footer-socials {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+        }
+        .footer-socials a {
+            color: #fff;
+            font-size: 1.3rem;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-socials a:hover {
+            color: #4caf50;
+        }
+        .footer-bottom {
+            width: 90%;
+            margin: 0 auto;
+            border-top: 1px solid #333;
+            padding: 12px 0 18px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #bdbdbd;
+        }
+        .footer-bottom a {
+            color: #bdbdbd;
+            text-decoration: none;
+            margin-left: 18px;
+            transition: color 0.2s;
+        }
+        .footer-bottom a:hover {
+            color: #fff;
+        }
+        @media (max-width: 900px) {
+            .main-content, .footer-content, .footer-bottom {
+                width: 98%;
+            }
+            .footer-map {
+                width: 100%;
+                min-width: 180px;
+            }
+        }
+        @media (max-width: 700px) {
+            .footer-content {
+                flex-direction: column;
+                gap: 18px;
+            }
+            .footer-map {
+                width: 100%;
+                min-width: 120px;
+            }
+            .footer-bottom {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header-bar">
+        <div class="header-content">
+            <button class="menu-btn">Menu</button>
+            <div class="logo">
+                <img src="https://i.imgur.com/6o5VwQp.png" alt="GCreatives Logo">
+                <span>GCREATIVES</span>
+            </div>
+            <div class="profile">
+                <img src="https://i.imgur.com/1XqF8bF.png" alt="Profile">
+            </div>
+        </div>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="success-icon">
+            <svg viewBox="0 0 52 52" fill="none">
+                <circle cx="26" cy="26" r="26" fill="#e8f5e9"/>
+                <path d="M16 27.5L23 34.5L36 20.5" stroke="#4caf50" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+        <div class="thank-title">Thank you!</div>
+        <div class="thank-desc">Thank you for your reservation.<br>Your booking and payment have been successfully received.</div>
+        <div class="thank-note">A confirmation email has been sent to you with further details.</div>
+    </div>
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <div class="footer-logo">
+                    <img src="https://i.imgur.com/6o5VwQp.png" alt="GCreatives Logo">
+                    <span style="font-weight:700;font-size:1.1rem;">GCREATIVES</span>
+                </div>
+                <div class="footer-desc">
+                    Our services ensure that every event is treated with utmost care and dedication—creating unforgettable experiences, made exactly how you want them.
+                </div>
+                <button class="footer-btn">Reserve Now</button>
+            </div>
+            <div class="footer-col">
+                <div style="font-weight:600;margin-bottom:10px;">Quick Links</div>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Packages</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <div style="font-weight:600;margin-bottom:10px;">Get in Touch</div>
+                <div class="footer-contact"><i class="fa fa-map-marker-alt"></i> Km. 38, Pulong Buhangin, Bilucao St, Sta. Maria, 3022 Bulacan</div>
+                <div class="footer-contact"><i class="fa fa-envelope"></i> gcreatives.ph@gmail.com</div>
+                <div class="footer-contact"><i class="fa fa-phone"></i> 09468170922</div>
+            </div>
+            <div class="footer-col" style="max-width:250px;">
+                <div class="footer-map">
+                    <iframe src="https://maps.google.com/maps?q=Birmingham&t=&z=13&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                </div>
+                <div style="font-size:0.98rem;">Dive deeper! Watch more videos at:</div>
+                <div class="footer-socials">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div>© 2025 GCreatives.PH &nbsp; | &nbsp; All rights reserved.</div>
+            <div>
+                <a href="#">Terms of Service</a>
+                <a href="#">Private Policy</a>
+            </div>
+        </div>
+    </footer>
+<!-- Confetti JS library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+    // Trigger confetti when the page loads
+    window.addEventListener('DOMContentLoaded', function() {
+        confetti({
+            particleCount: 120,
+            spread: 90,
+            origin: { y: 0.6 }
+        });
+    });
+</script>
+</body>
+</html>

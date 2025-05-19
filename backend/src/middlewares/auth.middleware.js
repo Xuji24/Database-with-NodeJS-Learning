@@ -3,19 +3,23 @@ const jwt = require('jsonwebtoken');
 // login
 const verifyToken = async (req, res, next) => {
     try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1]; // Extract the token from the Authorization header
-        if (!token) {
-            return res.status(401).json({ message: 'Access denied. Token not provided' });
+        if (req.isAuthenticated()) {
+            // Google OAuth user authenticated via session
+            console.log('User authenticated via Google OAuth:');
+            return next();
         }
-
+        const token = req.cookies.jwt;
+        
+        if (!token) {
+        return res.status(401).json({ message: 'Not authenticated' });
+        }
         // Verify the token using the secret key
         const decoded = await jwt.verify(token, process.env.JWT_SECRET_KEY);
         // Attach decoded data to request object
         req.customerID = decoded.id;
         req.email = decoded.email;
         req.user = decoded // attaching the whole payload
-        
+
         console.log('Decoded token:', decoded); // Log the decoded token for debugging
         
         next(); // Call the next middleware or route handler

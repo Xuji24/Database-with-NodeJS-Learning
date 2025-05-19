@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="login-container">
-        <form class="login-form" action="/login" method="POST" novalidate></form>
+        <form class="login-form" action="/api/auth/login" method="POST">
             <h2>Login</h2>
             <div class="form-group">
                 <label for="username">Username</label>
@@ -26,5 +26,7 @@
             <a href = "/api/auth/google">Sign in with google</a>
         </form>
     </div>
+
+    <script src = "./js/login.js"></script>
 </body>
 </html>

@@ -4,31 +4,36 @@
     <meta charset="UTF-8">
     <title>Packages</title>
     <link rel="stylesheet" href="css/package.css">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        
+    </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <button class="menu-btn">Menu</button>
             <div class="logo">
-                <img src="#" alt="Logo">
-                <span>G.CREATIVES.PH</span>
+            <img src="#" alt="Logo">
+            <span>G.CREATIVES.PH</span>
             </div>
             <button class="schedules-btn">Schedules</button>
         </div>
         <div class="title">OUR RATE CARDS</div>
         <div class="cards">
-            <button class="card" name = "package" value = "1">
+            <form id="packageForm" method="GET" action="/api/booking/packages">
+            <button class="card" type="submit" name="package" value="1">
                 <img src="https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80" alt="Package 1">
                 PACKAGE <strong>1</strong>
             </button>
-            <button class="card" name = "package" value = "2">PACKAGE <strong>2</strong></button>
-            <button class="card" name = "package" value = "3">PACKAGE <strong>3</strong></button>
-            <button class="card" name = "package" value = "4">PACKAGE <strong>4</strong></button>
-            <button class="card" name = "package" value = "5">PACKAGE <strong>5</strong></button>
-            <button class="card" name = "package" value = "6">PACKAGE <strong>6</strong></button>
-            <button class="card" name = "package" value = "7">PRE-DEBUT <strong>7</strong></button>
-            <button class="card" name = "package" value = "8">DEBUT <strong>8</strong></button>
+            <button class="card" type="submit" name="package" value="2">PACKAGE <strong>2</strong></button>
+            <button class="card" type="submit" name="package" value="3">PACKAGE <strong>3</strong></button>
+            <button class="card" type="submit" name="package" value="4">PACKAGE <strong>4</strong></button>
+            <button class="card" type="submit" name="package" value="5">PACKAGE <strong>5</strong></button>
+            <button class="card" type="submit" name="package" value="6">PACKAGE <strong>6</strong></button>
+            <button class="card" type="submit" name="package" value="7">PACKAGE <strong>7</strong></button>
+            <button class="card" type="submit" name="package" value="8">PACKAGE <strong>8</strong></button>
+            </form>
         </div>
         <div class="footer">
             <div class="footer-col">
@@ -79,5 +84,6 @@
     </div>
     <!-- Font Awesome CDN for icons (optional) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
 </body>
 </html>

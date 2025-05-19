@@ -1,124 +1,147 @@
-// new progress
-const {getUserBasicInfo} = require('../model/user.models');
-const {getBookedDates, getPackageInfo} = require('../model/booking.models')
-const {createBookingInfo} = require('../model/booking.models')
+const {getPackageInfoById} = require('../models/booking.models');
 
-// default value retrieved from the customer basic information table in db
-const bookingFormCustomerInfo = async (req, res) => {
+const getPackageInfo = async (req, res) => {
     try{
-        // get user information by email
-        const email = req.email;
-        const {contactNum, name, address} = req.body;
-
-        if(!email || !contactNum || !name || !address){
-            return res.status(400).json({error: 'Missing required customer information'});
+        const packageID = req.query.package;;
+        console.log("Package ID: ", packageID);
+        const packageInfo = await getPackageInfoById(packageID);
+        if (packageInfo.length === 0) {
+            return res.status(404).json({ message: 'Package not found' });
         }
-        // check if the user exists in the database
-        const userInfo = await getUserBasicInfo(email);
+        req.session.booking = {
+            ...req.session.booking,
+            packageID,
+            //bookingRange: packageInfo[0].booking_range_months
+        };
         
-        res.status(200).json({
-            status: 'success',
-            data: {
-                userInfo: userInfo
-            }
-        });
+        
+        //return res.status(200).json({ message: "Customer info save!", redirect: '/booking-customer' });
+        return res.redirect('/booking-customer');
     }catch(err){
         console.log(err);
-        res.status(500).json({error: 'Internal server error'});
+        return res.status(500).json({ message: "Package did not get" });
     }
 }
-
-const bookingFormEventInfo = async (req, res) => {
+const saveCustomerInfo = async(req, res) => {
     try{
-        // get event information by event id
-        const packageID = req.params.packageID;
-        const {price, eventDate, event, location, eventTheme, otherConcern} = req.body;
-        if(!packageId || !eventDate || !location || !eventTheme){
-            return res.status(400).json({error: 'Missing required event information'});
+        const { name, contactNum, address, email } = req.body;
+        const emptyFields = checkEmptyFields([name, contactNum, address, email]);
+        if (emptyFields) {
+            return res.status(400).json({ message: "Please fill all fields" });
         }
-        const eventInfo = {
-            packageID: packageID,
-            price: price,
-            eventDate: eventDate,
-            event: event,
-            location: location,
-            eventTheme: eventTheme,
-            otherConcern: otherConcern
-        }
-        
-        res.status(200).json({
-            status: 'success',
-            data: {
-                eventInfo: eventInfo[0]
-            }
-        });
+
+        req.session.booking = {
+            ...req.session.booking,
+            name,
+            contactNum,
+            address,
+            email,
+        };
+
+        //return res.status(200).json({ message: "Customer info save!", redirect: '/booking-event' });
+        res.redirect('/booking-event');
     }catch(err){
         console.log(err);
-        res.status(500).json({error: 'Internal server error'});
+        return res.status(500).json({ message: "Customer info did not save" });
     }
-}
+};
 
-const fetchBookedDates = async (req, res) => {
-    try {
-        const dates = await getBookedDates();
-        res.json({ bookedDates: dates });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-}
+const saveEventInfo = async (req, res) => {
+    try{
+        const { package: selectedPackage, price, eventDate, event, location, eventTheme, otherConcern } = req.body;
 
-const fetchPackageInfo = async (req, res) => {
-   try{
-        // get package information by package code
-        const customerID = req.customerID;
-        if(!customerID){
-            return res.status(400).json({ error: 'Missing required customer information', redirect: '/' });
+        const emptyFields = checkEmptyFields([selectedPackage, price, eventDate, event, location, eventTheme]);
+
+        if (emptyFields) {
+            return res.status(400).json({ message: "Please fill all fields" });
         }
-
-        const packageCode = req.body.package;
-        const packageInfo = await getPackageInfo(packageCode);
-        
-        if(packageInfo.length === 0) {
-            return res.status(404).json({error: 'Package not found'});
-        }
-        
-        res.status(200).json({
-            status: 'success',
-            data: {
-                packageInfo: packageInfo[0]
-            }
-        });
-   }catch(err){
+        req.session.booking = {
+            ...req.session.booking,
+            selectedPackage,
+            price,
+            eventDate,
+            location,
+            eventTheme,
+            otherConcern
+        };
+        //return res.status(200).json({ message: "Event Info Saved!", redirect: '/booking-terms' });
+        res.redirect('/booking-terms');
+    }catch(err){
         console.log(err);
-        res.status(500).json({error: 'Internal server error'});
-   }
-}
-
-const insertBookingInfo = async (req, res) => {
-    try {
-        const { customerInfo, eventInfo, paymentInfo } = req.body;
-        if (!customerInfo || !eventInfo || !paymentInfo) {
-            return res.status(400).json({ error: 'Missing required booking information' });
-        }
-        
-        const bookingResult = await createBookingInfo(customerInfo, eventInfo, paymentInfo);
-        
-        res.status(201).json({
-            status: 'success',
-            data: {
-                bookingResult: bookingResult
-            }
-        });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: "Event info did not save" });
     }
+};
+
+const saveTerms = async (req, res) => {
+    try{
+        //return res.status(200).json({ message: "Terms have read", redirect: '/booking-payment' });
+        res.redirect('/booking-payment');
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({ message: "Please check the terms & conditions" });
+    }
+    
+};
+
+const savePaymentInfo = async (req, res) => {
+    try{
+        const { paymentMethod, mobileNumber } = req.body;
+        const emptyFields = checkEmptyFields([ paymentMethod, mobileNumber ]);
+
+        if(emptyFields) {
+            return res.status(400).json({ message: "Please fill all fields" });
+        }
+        req.session.booking = {
+            ...req.session.booking,
+            paymentMethod,
+            mobileNumber
+        };
+        //return res.status(200).json({ message: "Successfully paid the booking", redirect: '/booking-end' });
+        res.redirect('/booking-end');
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({ message: "Customer info did not save" });
+    }
+};
+
+const finalizeBooking = async (req, res) => {
+    try{
+        const bookingData = req.session.booking;
+
+        // Validation (ensure all needed fields exist)
+        if (!bookingData.name || !bookingData.eventDate || !bookingData.paymentMethod) {
+            return res.status(400).json({ message: "Incomplete booking data" });
+        }
+        console.log("Booking Data: ", bookingData);
+        // Save to database (pseudo)
+        //await saveBookingToDatabase(bookingData);
+
+        // Clear session
+        req.session.booking = null;
+
+        return res.status(200).json({ message: "Booking finalized" });
+    }catch(err){
+        console.log(err);
+        return res.status(500).json({ message: "Customer info did not save" });
+    }
+    
+};
+
+function checkEmptyFields(fields){
+    for (const field of fields) {
+        if (!field) {
+            return true;
+        }
+    }
+    return false;
 }
 module.exports = {
-    bookingFormCustomerInfo,
-    bookingFormEventInfo,
-    fetchBookedDates,
-    fetchPackageInfo,
-    insertBookingInfo
-}
+    getPackageInfo,
+    saveCustomerInfo,
+    saveEventInfo,
+    saveTerms,
+    savePaymentInfo,
+    finalizeBooking
+};
+
+
